@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Tue Dec 11 22:13:10 2018
-
 @author: tatvam
 """
 
@@ -49,18 +48,23 @@ X = np.append(arr = np.ones((50,1)).astype(float), values = X,axis=1)
 X_opt = X[:, [0, 1, 2, 3, 4, 5]]
 regressor_OLS = sm.OLS(endog = Y,exog = X_opt).fit()
 regressor_OLS.summary()
+mx = 0
 
 while 1:
+    regressor_OLS = sm.OLS(Y,X_opt).fit()
+    print(regressor_OLS.summary())
     flag = 0
+    mx = 0
     for i in range(1,int(X_opt.size/50)):
-        cmp = regressor_OLS.summary().tables[1][i][4].data
-        if float(cmp) > 0.05:
-            X_opt = np.delete(X_opt,i,axis = 1)
+        mx = max(mx,float(regressor_OLS.summary().tables[1][i][4].data))
+    print(mx)
+    for i in range(1,int(X_opt.size/50)):
+        if float(mx) > 0.05 and mx == float(regressor_OLS.summary().tables[1][i][4].data):
+            X_opt = np.delete(X_opt,i-1,axis = 1)
             flag = 1
             break
     if flag == 0:
         break
-    regressor_OLS = sm.OLS(endog = Y,exog = X_opt).fit()
 
 X_opt = X_opt[:, 1 : ]
 from sklearn.model_selection import train_test_split
@@ -88,4 +92,21 @@ def backwardElimination(x, sl):
 SL = 0.05
 X_opt = X[:, [0, 1, 2, 3, 4, 5]]
 X_Modeled = backwardElimination(X_opt, SL)
+"""
+"""
+xelimination = X[:,[0,1,2,3,4,5]]
+regressorOLS = sm.OLS(Y, xelimination).fit()
+print(regressorOLS.summary())
+xelimination = X[:,[0,1,3,4,5]]
+regressorOLS = sm.OLS(Y, xelimination).fit()
+print(regressorOLS.summary())
+xelimination = X[:,[0,3,4,5]]
+regressorOLS = sm.OLS(Y, xelimination).fit()
+print(regressorOLS.summary())
+xelimination = X[:,[0,3,5]]
+regressorOLS = sm.OLS(Y, xelimination).fit()
+print(regressorOLS.summary())
+xelimination = X[:,[0,3]]
+regressorOLS = sm.OLS(Y, xelimination).fit()
+print(regressorOLS.summary())
 """
